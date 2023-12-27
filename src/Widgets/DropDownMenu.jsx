@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, forwardRef } from "react";
 import styled from "styled-components";
 
 const Wrapper = styled.div`
@@ -34,7 +34,7 @@ const FieldWrapper = styled.div`
   align-items: center;
 `;
 
-const DropdownMenu = ({ options, label, hint }) => {
+const DropdownMenu = forwardRef(({ options, label, hint }, ref) => {
   const [selectedOption, setSelectedOption] = useState("");
 
   const handleSelectChange = (e) => {
@@ -45,7 +45,7 @@ const DropdownMenu = ({ options, label, hint }) => {
     <Wrapper>
       <Label>{hint}</Label>
       <FieldWrapper>
-        <Select value={selectedOption} onChange={handleSelectChange}>
+        <Select ref={ref} value={selectedOption} onChange={handleSelectChange}>
           <option value="" disabled>
             {label}
           </option>
@@ -58,6 +58,6 @@ const DropdownMenu = ({ options, label, hint }) => {
       </FieldWrapper>
     </Wrapper>
   );
-};
+});
 
 export default DropdownMenu;

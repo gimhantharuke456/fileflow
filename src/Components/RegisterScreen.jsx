@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import bro from "../assets/bro.png";
 import logo from "../assets/logo.png";
@@ -7,6 +7,11 @@ import PasswordField from "../Widgets/PasswordField";
 import FilledButton from "../Widgets/FilledButton";
 import { useNavigate } from "react-router-dom";
 import DropdownMenu from "../Widgets/DropDownMenu";
+import {
+  signupUser,
+  createUser as createUserService,
+} from "../services/auth_service";
+
 const Container = styled.div`
   width: 100vw;
   height: 100vh;
@@ -79,22 +84,63 @@ const DontYouText = styled.p`
 const RegisterScreen = () => {
   const emailRef = useRef();
   const passwordRef = useRef();
-  const mobileNumber = useRef();
+  const mobileNumberRef = useRef();
   const nameRef = useRef();
   const userRoleRef = useRef();
   const confirmPasswordRef = useRef();
   const navigate = useNavigate();
+  const [error, setError] = useState("");
+
+  const handleRegister = async () => {
+    try {
+      if (
+        !nameRef.current.value ||
+        !emailRef.current.value ||
+        !mobileNumberRef.current.value ||
+        !passwordRef.current.value ||
+        !confirmPasswordRef.current.value
+      ) {
+        setError("All fields are required");
+        return;
+      }
+
+      // Check if passwords match
+      if (passwordRef.current.value !== confirmPasswordRef.current.value) {
+        setError("Passwords do not match");
+        return;
+      }
+
+      // Register the user
+      await signupUser(emailRef.current.value, passwordRef.current.value);
+
+      // Create user data
+      const userData = {
+        name: nameRef.current.value,
+        email: emailRef.current.value,
+        mobileNumber: mobileNumberRef.current.value,
+        userRole: userRoleRef.current.value,
+      };
+
+      await createUserService(userData);
+
+      navigate("/login");
+    } catch (error) {
+      setError(error.message || "Error during registration");
+    }
+  };
+
   return (
     <Container>
       <Section>
         <Image src={bro} alt="Login" />
       </Section>
       <Section>
-        <div style={{ flex: 1 }} />{" "}
+        <div style={{ flex: 1 }} />
         <FormContainer>
           <Logo>
             <img src={logo} style={{ width: "100%", height: "100%" }} />
           </Logo>
+          {error && <div style={{ color: "red" }}>{error}</div>}
           <TextFormField
             ref={nameRef}
             label={"Enter your name"}
@@ -108,10 +154,11 @@ const RegisterScreen = () => {
           <DropdownMenu
             options={["Admin"]}
             label={"Select the user role"}
-            hint={"User Roler:"}
+            hint={"User Role:"}
+            ref={userRoleRef}
           />
           <TextFormField
-            ref={emailRef}
+            ref={mobileNumberRef}
             label={"Enter your mobile number"}
             hint={"Mobile Number:"}
           />
@@ -126,18 +173,14 @@ const RegisterScreen = () => {
             hint={"Confirm Password:"}
           />
           <FilledButton
-            onClick={() => {}}
+            onClick={handleRegister}
             text={"Register"}
             width={"421px"}
             height={"44px"}
           />
           <ForgetPasswordWrapper>
             <DontYouText>Already have an account ? </DontYouText>
-            <ForgetPasswordText
-              onClick={() => {
-                navigate("/login");
-              }}
-            >
+            <ForgetPasswordText onClick={() => navigate("/login")}>
               {" "}
               Login now
             </ForgetPasswordText>
