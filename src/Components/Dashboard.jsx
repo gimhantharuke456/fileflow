@@ -5,6 +5,11 @@ import { getCurrentUserData } from "../services/auth_service";
 import state from "../store";
 import { useSnapshot } from "valtio";
 import profile_icon from "../assets/profile_icon.svg";
+import DashboardMenuItem from "../Widgets/DashboardMenuItem";
+import Home from "../assets/u_home-alt.svg";
+import Upload from "../assets/u_box.svg";
+import Notifications from "../assets/u_bell.svg";
+import Bin from "../assets/trash-01.svg";
 const Container = styled.div`
   width: 100vw;
   height: 100vh;
@@ -33,20 +38,34 @@ const WelcomeText = styled.p`
   line-height: 130%; /* 23.4px */
 `;
 
+const Body = styled.div`
+  height: calc(100vh - 72px);
+  display: flex;
+  width: 100vw;
+`;
+
+const LeftMenuContainer = styled.div`
+  width: 250px;
+  height: 100%;
+  border: 1px solid grey;
+`;
+
+const RightBody = styled.div``;
+
 const Dashboard = () => {
   const snap = useSnapshot(state);
   useEffect(() => {
-    if (state.currentUser == {}) {
-      getCurrentUserData().then((res) => {
-        state.currentUser = res;
-      });
-    }
+    getCurrentUserData().then((res) => {
+      state.currentUser = res;
+    });
   }, []);
   return (
     <Container>
       <Navbar>
         <div style={{ width: 32 }} />
-        <img src={logo} width={170} height={72} alt="Logo" />
+        <Logo>
+          <img src={logo} width={170} height={72} alt="Logo" />
+        </Logo>
         <div style={{ flex: 1 }} />
         <WelcomeText>
           Welcome,
@@ -58,6 +77,19 @@ const Dashboard = () => {
         <img style={{ cursor: "pointer" }} src={profile_icon} />
         <div style={{ width: 32 }} />
       </Navbar>
+      <Body>
+        <LeftMenuContainer>
+          <DashboardMenuItem title={"Home"} icon={Home} index={0} />
+          <DashboardMenuItem title={"Upload"} icon={Upload} index={1} />
+          <DashboardMenuItem
+            title={"Notifications"}
+            icon={Notifications}
+            index={2}
+          />
+          <DashboardMenuItem title={"Bin"} icon={Bin} index={3} />
+        </LeftMenuContainer>
+        <RightBody></RightBody>
+      </Body>
     </Container>
   );
 };
