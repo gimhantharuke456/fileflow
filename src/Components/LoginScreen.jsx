@@ -93,7 +93,7 @@ const LoginScreen = () => {
 
     try {
       await loginUser(email, password);
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
       setValidationError("Invalid email or password. Please try again.");
     }

@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import SplashScreen from "./Components/SplashScreen";
 import LoginScreen from "./Components/LoginScreen";
 import RegisterScreen from "./Components/RegisterScreen";
+import Dashboard from "./Components/Dashboard";
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
         <Route path="/" element={<SplashScreen />} />
         <Route path="/login" element={<LoginScreen />} />
         <Route path="/register" element={<RegisterScreen />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </BrowserRouter>
   );

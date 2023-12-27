@@ -123,7 +123,7 @@ const RegisterScreen = () => {
 
       await createUserService(userData);
 
-      navigate("/login");
+      navigate("/dashboard");
     } catch (error) {
       setError(error.message || "Error during registration");
     }
