@@ -4,6 +4,7 @@ import logo from "../assets/logo.png";
 import splash from "../assets/splash.png";
 import OutlinedButton from "../Widgets/OutlinedButton";
 import FilledButton from "../Widgets/FilledButton";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   width: 100vw;
@@ -57,6 +58,7 @@ const SplashImage = styled.img`
 `;
 
 const SplashScreen = () => {
+  const navigate = useNavigate();
   return (
     <Container>
       <Navbar>
@@ -65,9 +67,21 @@ const SplashScreen = () => {
           <img src={logo} width={170} height={72} alt="Logo" />
         </Logo>
         <div style={{ flex: 1 }} />
-        <OutlinedButton text={"Login"} width={"141px"} onClick={() => {}} />
+        <OutlinedButton
+          text={"Login"}
+          width={"141px"}
+          onClick={() => {
+            navigate("/login");
+          }}
+        />
         <div style={{ width: 14 }} />
-        <FilledButton text={"Register"} width={"141px"} onClick={() => {}} />
+        <FilledButton
+          text={"Register"}
+          width={"141px"}
+          onClick={() => {
+            navigate("/register");
+          }}
+        />
         <div style={{ width: 32 }} />
       </Navbar>
       <Body>
