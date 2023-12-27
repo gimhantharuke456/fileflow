@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import styled from "styled-components";
 
 const Wrapper = styled.div`
@@ -34,7 +34,7 @@ const FieldWrapper = styled.div`
   border-radius: 6px;
 `;
 
-const TextFormField = ({ ref, label, hint }) => {
+const TextFormField = forwardRef(({ label, hint }, ref) => {
   return (
     <Wrapper>
       <Label>{hint}</Label>
@@ -43,6 +43,6 @@ const TextFormField = ({ ref, label, hint }) => {
       </FieldWrapper>
     </Wrapper>
   );
-};
+});
 
 export default TextFormField;

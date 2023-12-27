@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, forwardRef } from "react";
 import styled from "styled-components";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
@@ -41,7 +41,7 @@ const FieldWrapper = styled.div`
   border-radius: 6px;
 `;
 
-const PasswordField = ({ ref, label, hint }) => {
+const PasswordField = forwardRef(({ label, hint }, ref) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -63,6 +63,6 @@ const PasswordField = ({ ref, label, hint }) => {
       </FieldWrapper>
     </Wrapper>
   );
-};
+});
 
 export default PasswordField;

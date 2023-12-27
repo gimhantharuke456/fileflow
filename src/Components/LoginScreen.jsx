@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import login from "../assets/login.png";
 import logo from "../assets/logo.png";
@@ -6,6 +6,7 @@ import TextFormField from "../Widgets/TextFormField";
 import PasswordField from "../Widgets/PasswordField";
 import FilledButton from "../Widgets/FilledButton";
 import { useNavigate } from "react-router-dom";
+import { loginUser } from "../services/auth_service";
 const Container = styled.div`
   width: 100vw;
   height: 100vh;
@@ -76,9 +77,27 @@ const DontYouText = styled.p`
 `;
 
 const LoginScreen = () => {
-  const emailRef = useRef();
-  const passwordRef = useRef();
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
   const navigate = useNavigate();
+  const [validationError, setValidationError] = useState(null);
+
+  const handleLogin = async () => {
+    const email = emailRef.current.value;
+    const password = passwordRef.current.value;
+
+    if (!email || !password) {
+      setValidationError("Please enter both email and password.");
+      return;
+    }
+
+    try {
+      await loginUser(email, password);
+      navigate("/");
+    } catch (error) {
+      setValidationError("Invalid email or password. Please try again.");
+    }
+  };
   return (
     <Container>
       <Section>
@@ -106,11 +125,14 @@ const LoginScreen = () => {
             <ForgetPasswordText>Forgot Password</ForgetPasswordText>
           </ForgetPasswordWrapper>
           <FilledButton
-            onClick={() => {}}
+            onClick={() => {
+              handleLogin();
+            }}
             text={"Login"}
             width={"421px"}
             height={"44px"}
-          />
+          />{" "}
+          {validationError && <p style={{ color: "red" }}>{validationError}</p>}
           <ForgetPasswordWrapper>
             <DontYouText>Don't have an account ? </DontYouText>
             <ForgetPasswordText
