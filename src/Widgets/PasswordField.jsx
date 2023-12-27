@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Wrapper = styled.div`
   display: flex;
@@ -11,7 +12,7 @@ const Label = styled.div`
   font-size: 13px;
   font-style: normal;
   font-weight: 400;
-  line-height: 12px; /* 109.091% */
+  line-height: 12px;
   letter-spacing: 0.3px;
 `;
 
@@ -21,6 +22,12 @@ const Field = styled.input`
   width: 100%;
   height: 100%;
   outline: none;
+`;
+
+const EyeButton = styled.button`
+  background: transparent;
+  border: none;
+  cursor: pointer;
 `;
 
 const FieldWrapper = styled.div`
@@ -34,15 +41,28 @@ const FieldWrapper = styled.div`
   border-radius: 6px;
 `;
 
-const TextFormField = ({ ref, label, hint }) => {
+const PasswordField = ({ ref, label, hint }) => {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
+
   return (
     <Wrapper>
       <Label>{hint}</Label>
       <FieldWrapper>
-        <Field ref={ref} placeholder={label} />
+        <Field
+          ref={ref}
+          type={showPassword ? "text" : "password"}
+          placeholder={label}
+        />
+        <EyeButton onClick={togglePasswordVisibility}>
+          {showPassword ? <FaEyeSlash /> : <FaEye />}
+        </EyeButton>
       </FieldWrapper>
     </Wrapper>
   );
 };
 
-export default TextFormField;
+export default PasswordField;

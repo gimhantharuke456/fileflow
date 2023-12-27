@@ -6,7 +6,7 @@ const FilledWrapper = styled.div`
   border: 1px solid #4a9230; /* Border color */
   border-radius: 6px;
   width: ${(props) => props.width || "auto"};
-  height: 30px;
+  height: ${(props) => props.height || "30px"};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -25,9 +25,9 @@ const FilledText = styled.h5`
   letter-spacing: 0.3px;
 `;
 
-const FilledButton = ({ onClick, width, text }) => {
+const FilledButton = ({ onClick, width, text, height }) => {
   return (
-    <FilledWrapper onClick={onClick} width={width}>
+    <FilledWrapper onClick={onClick} width={width} height={height}>
       <FilledText>{text}</FilledText>
     </FilledWrapper>
   );

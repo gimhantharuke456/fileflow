@@ -3,6 +3,9 @@ import styled from "styled-components";
 import login from "../assets/login.png";
 import logo from "../assets/logo.png";
 import TextFormField from "../Widgets/TextFormField";
+import PasswordField from "../Widgets/PasswordField";
+import FilledButton from "../Widgets/FilledButton";
+import { useNavigate } from "react-router-dom";
 const Container = styled.div`
   width: 100vw;
   height: 100vh;
@@ -43,8 +46,39 @@ const FormTitle = styled.h1`
   line-height: 28px; /* 140% */
 `;
 
+const ForgetPasswordWrapper = styled.div`
+  display: flex;
+  width: 421px;
+  align-items: center;
+  height: auto;
+  justify-content: center;
+  gap: 8px;
+`;
+
+const ForgetPasswordText = styled.div`
+  color: #007aff;
+  text-align: right;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+`;
+const DontYouText = styled.p`
+  color: #1a1a1a;
+  font-feature-settings: "clig" off, "liga" off;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px; /* 166.667% */
+  letter-spacing: 0.3px;
+`;
+
 const LoginScreen = () => {
   const emailRef = useRef();
+  const passwordRef = useRef();
+  const navigate = useNavigate();
   return (
     <Container>
       <Section>
@@ -62,6 +96,32 @@ const LoginScreen = () => {
             label={"Enter your email"}
             hint={"Email:"}
           />
+          <PasswordField
+            ref={passwordRef}
+            label={"Enter your password"}
+            hint={"Password:"}
+          />
+          <ForgetPasswordWrapper>
+            <div style={{ flex: 1 }} />
+            <ForgetPasswordText>Forgot Password</ForgetPasswordText>
+          </ForgetPasswordWrapper>
+          <FilledButton
+            onClick={() => {}}
+            text={"Login"}
+            width={"421px"}
+            height={"44px"}
+          />
+          <ForgetPasswordWrapper>
+            <DontYouText>Don't have an account ? </DontYouText>
+            <ForgetPasswordText
+              onClick={() => {
+                navigate("/register");
+              }}
+            >
+              {" "}
+              Register now
+            </ForgetPasswordText>
+          </ForgetPasswordWrapper>
         </FormContainer>
         <div style={{ flex: 1 }} />
       </Section>
