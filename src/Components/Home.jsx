@@ -4,9 +4,8 @@ import styled from "styled-components";
 import BodyTitle from "../Widgets/BodyTitle";
 import file from "../assets/file-plus-01.svg";
 import Modal from "react-modal";
-
+import { createProject } from "../services/project_service";
 import folder from "../assets/folder.svg";
-import TextFormField from "../Widgets/TextFormField";
 import FilledButton from "../Widgets/FilledButton";
 import OutlinedButton from "../Widgets/OutlinedButton";
 
@@ -83,7 +82,10 @@ Modal.setAppElement("#root"); // Replace with the root element of your app
 
 const Home = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const projectRef = useRef();
+  const projectName = useRef();
+  const [accessLevel, setAccessLevel] = useState("admin");
+
+  const handleAccessChange = (e) => setAccessLevel(e.target.value);
   const handleCreateProjectClick = () => {
     setIsModalVisible(true);
   };
@@ -91,8 +93,11 @@ const Home = () => {
   const handleCloseModal = () => {
     setIsModalVisible(false);
   };
+  const handleCreateProject = async (name, access) => {
+    await createProject(name, access);
+    handleCloseModal();
+  };
   const CreateProjectModal = ({ onClose }) => {
-    // Add your modal content and form fields here
     return (
       <div
         style={{
@@ -135,6 +140,7 @@ const Home = () => {
                 width: "100%",
                 height: "100%",
               }}
+              ref={projectName}
               placeholder="Project Name"
             />
           </div>
@@ -153,7 +159,13 @@ const Home = () => {
             }}
           >
             <label style={{ margin: "auto 10px", fontSize: "12px" }}>
-              <input type="radio" name="access" value="admin" />
+              <input
+                type="radio"
+                name="access"
+                value="admin"
+                checked={accessLevel === "admin"}
+                onChange={handleAccessChange}
+              />
               {` Admin`}
             </label>
           </div>
@@ -167,7 +179,13 @@ const Home = () => {
             }}
           >
             <label style={{ margin: "auto 10px", fontSize: "12px" }}>
-              <input type="radio" name="access" value="admin" />
+              <input
+                type="radio"
+                name="access"
+                value="anyone"
+                checked={accessLevel === "anyone"}
+                onChange={handleAccessChange}
+              />
               {`  Anyone Can Access`}
             </label>
           </div>
@@ -177,7 +195,13 @@ const Home = () => {
           <div style={{ flex: 1 }} />
           <OutlinedButton onClick={onClose} text={"Cancel"} width={"70px"} />
           <div style={{ width: 8 }} />
-          <FilledButton onClick={() => {}} text={"Create"} width={"70px"} />
+          <FilledButton
+            onClick={() => {
+              handleCreateProject(projectName.current.value, accessLevel);
+            }}
+            text={"Create"}
+            width={"70px"}
+          />
         </div>
       </div>
     );
@@ -219,7 +243,7 @@ const Home = () => {
           content: {
             width: "60vw",
             maxWidth: "400px",
-            maxHeight: "300px",
+            maxHeight: "350px",
             margin: "auto",
           },
         }}
