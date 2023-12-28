@@ -6,7 +6,7 @@ import state from "../store";
 import { useSnapshot } from "valtio";
 import profile_icon from "../assets/profile_icon.svg";
 import DashboardMenuItem from "../Widgets/DashboardMenuItem";
-import Home from "../assets/u_home-alt.svg";
+import Home from "../Components/Home";
 import Upload from "../assets/u_box.svg";
 import Notifications from "../assets/u_bell.svg";
 import Bin from "../assets/trash-01.svg";
@@ -50,7 +50,10 @@ const LeftMenuContainer = styled.div`
   border: 1px solid grey;
 `;
 
-const RightBody = styled.div``;
+const RightBody = styled.div`
+  flex: 1;
+  padding: 16px;
+`;
 
 const Dashboard = () => {
   const snap = useSnapshot(state);
@@ -88,7 +91,7 @@ const Dashboard = () => {
           />
           <DashboardMenuItem title={"Bin"} icon={Bin} index={3} />
         </LeftMenuContainer>
-        <RightBody></RightBody>
+        <RightBody>{snap.dashboardActiveIndex === 0 && <Home />}</RightBody>
       </Body>
     </Container>
   );
