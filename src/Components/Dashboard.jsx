@@ -14,6 +14,7 @@ import Uploads from "./Uploads";
 import { useNavigate } from "react-router-dom";
 import Project from "./Project";
 import Recycle from "./Recycle";
+import AppNotifications from "./AppNotifications";
 const Container = styled.div`
   width: 100vw;
   height: 100vh;
@@ -103,6 +104,7 @@ const Dashboard = () => {
         <RightBody>
           {snap.dashboardActiveIndex === 0 && <Home />}
           {snap.dashboardActiveIndex == 1 && <Uploads />}
+          {snap.dashboardActiveIndex == 2 && <AppNotifications />}
           {snap.dashboardActiveIndex == 3 && <Recycle />}
           {snap.dashboardActiveIndex == 4 && <Project />}
         </RightBody>

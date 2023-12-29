@@ -10,6 +10,7 @@ import {
   where,
   addDoc,
 } from "firebase/firestore";
+import { createNotification } from "./notification_service";
 
 const fileCollection = "files";
 
@@ -26,6 +27,7 @@ export const createFile = async (projectId, name, downloadUrl, type) => {
 
     const col = collection(db, fileCollection);
     await addDoc(col, fileData);
+    await createNotification(`New file uploaded: ${name}`);
   } catch (error) {
     throw Error(error);
   }
@@ -134,6 +136,7 @@ export const renameFile = async (fileId, newName) => {
   try {
     const docRef = doc(db, fileCollection, fileId);
     await updateDoc(docRef, { name: newName });
+    await createNotification(`File with id ${fileId} renamed to ${newName}`);
   } catch (error) {
     throw Error(error);
   }
@@ -143,6 +146,7 @@ export const moveToRecycle = async (fileId) => {
   try {
     const docRef = doc(db, fileCollection, fileId);
     await updateDoc(docRef, { status: "inactive" });
+    await createNotification(`File with id ${fileId} moved to bin`);
   } catch (error) {
     throw Error(error);
   }

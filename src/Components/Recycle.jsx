@@ -9,12 +9,12 @@ const Body = styled.div`
   border-radius: 25px;
   background: #f5f5f5;
   width: 100%;
-  height: 100%;
   padding: 16px 34px;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  max-height: calc(100vh - 64px - 36px - 16px - 16px);
+  height: calc(100vh - 64px - 36px - 16px - 100px);
+  max-height: calc(100vh - 64px - 36px - 16px - 100px);
 `;
 
 const FileGrid = styled.div`
