@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import logo from "../assets/logo.png";
-import { getCurrentUserData } from "../services/auth_service";
+import { getCurrentUserData, signout } from "../services/auth_service";
 import state from "../store";
 import { useSnapshot } from "valtio";
 import profile_icon from "../assets/profile_icon.svg";
@@ -15,6 +15,8 @@ import { useNavigate } from "react-router-dom";
 import Project from "./Project";
 import Recycle from "./Recycle";
 import AppNotifications from "./AppNotifications";
+import { Menu, Dropdown, message } from "antd";
+
 const Container = styled.div`
   width: 100vw;
   height: 100vh;
@@ -40,7 +42,7 @@ const WelcomeText = styled.p`
   font-size: 15px;
   font-style: normal;
   font-weight: 400;
-  line-height: 130%; /* 23.4px */
+  line-height: 130%;
 `;
 
 const Body = styled.div`
@@ -63,6 +65,26 @@ const RightBody = styled.div`
 const Dashboard = () => {
   const snap = useSnapshot(state);
   const navigate = useNavigate();
+
+  const handleMenuClick = ({ key }) => {
+    if (key === "logout") {
+      try {
+        signout().then(() => {
+          navigate("/");
+        });
+      } catch (err) {
+        message.error(`${err}`);
+      }
+    }
+  };
+
+  const menu = (
+    <Menu onClick={handleMenuClick}>
+      <Menu.Item key="userEmail">{snap.currentUser.email}</Menu.Item>
+      <Menu.Item key="logout">Logout</Menu.Item>
+    </Menu>
+  );
+
   useEffect(() => {
     getCurrentUserData()
       .then((res) => {
@@ -72,6 +94,7 @@ const Dashboard = () => {
         navigate("/");
       });
   }, []);
+
   return (
     <Container>
       <Navbar>
@@ -87,7 +110,9 @@ const Dashboard = () => {
           >{` ${snap.currentUser.name}`}</span>
         </WelcomeText>
         <div style={{ width: 16 }} />
-        <img style={{ cursor: "pointer" }} src={profile_icon} />
+        <Dropdown overlay={menu} trigger={["click"]}>
+          <img style={{ cursor: "pointer" }} src={profile_icon} alt="Profile" />
+        </Dropdown>
         <div style={{ width: 32 }} />
       </Navbar>
       <Body>

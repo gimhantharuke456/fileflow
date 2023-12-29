@@ -9,6 +9,7 @@ import {
   deleteDoc,
   addDoc,
 } from "firebase/firestore";
+import { createNotification } from "./notification_service";
 const projectCollection = "projects";
 
 export const createProject = async (name, access) => {
@@ -20,6 +21,7 @@ export const createProject = async (name, access) => {
 
     const col = collection(db, projectCollection);
     await addDoc(col, projectData);
+    await createNotification(`Project created with name ${name}`);
   } catch (error) {
     throw Error(error);
   }
