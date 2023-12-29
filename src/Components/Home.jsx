@@ -12,6 +12,7 @@ import { message } from "antd";
 import { useSnapshot } from "valtio";
 import state from "../store/index";
 import ProjectCard from "../Widgets/ProjectCard";
+import { getFiles } from "../services/project_file_service";
 const ModalDivider = styled.div`
   width: 100%;
   height: 1px;
@@ -51,6 +52,8 @@ const Body = styled.div`
   padding: 16px 34px;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  max-height: calc(100vh - 64px - 36px - 16px - 16px);
 `;
 
 const ButtonWrapper = styled.div`
@@ -98,6 +101,13 @@ const Home = () => {
   };
   const handleCreateProject = async (name, access) => {
     await createProject(name, access);
+    await getProjects()
+      .then((res) => {
+        state.projects = res;
+      })
+      .catch((err) => {
+        message.error(`${err}`);
+      });
     handleCloseModal();
   };
   const CreateProjectModal = ({ onClose }) => {
@@ -214,6 +224,13 @@ const Home = () => {
     getProjects()
       .then((res) => {
         state.projects = res;
+      })
+      .catch((err) => {
+        message.error(`${err}`);
+      });
+    getFiles()
+      .then((res) => {
+        state.files = res;
       })
       .catch((err) => {
         message.error(`${err}`);
