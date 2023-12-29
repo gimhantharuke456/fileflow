@@ -10,12 +10,14 @@ import Home from "../Components/Home";
 import Upload from "../assets/u_box.svg";
 import Notifications from "../assets/u_bell.svg";
 import Bin from "../assets/trash-01.svg";
+import User from "../assets/profile_icon.svg";
 import Uploads from "./Uploads";
 import { useNavigate } from "react-router-dom";
 import Project from "./Project";
 import Recycle from "./Recycle";
 import AppNotifications from "./AppNotifications";
 import { Menu, Dropdown, message } from "antd";
+import Users from "../Widgets/Users";
 
 const Container = styled.div`
   width: 100vw;
@@ -125,6 +127,7 @@ const Dashboard = () => {
             index={2}
           />
           <DashboardMenuItem title={"Bin"} icon={Bin} index={3} />
+          <DashboardMenuItem title={"Users"} icon={User} index={5} />
         </LeftMenuContainer>
         <RightBody>
           {snap.dashboardActiveIndex === 0 && <Home />}
@@ -132,6 +135,7 @@ const Dashboard = () => {
           {snap.dashboardActiveIndex == 2 && <AppNotifications />}
           {snap.dashboardActiveIndex == 3 && <Recycle />}
           {snap.dashboardActiveIndex == 4 && <Project />}
+          {snap.dashboardActiveIndex == 5 && <Users />}
         </RightBody>
       </Body>
     </Container>

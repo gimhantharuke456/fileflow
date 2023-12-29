@@ -6,10 +6,13 @@ import {
 import { auth, db } from "../firebaseConfig";
 import {
   collection,
+  deleteDoc,
   doc,
   getDoc,
+  getDocs,
   query,
   setDoc,
+  updateDoc,
   where,
 } from "firebase/firestore";
 export const loginUser = async (email, password) => {
@@ -62,7 +65,7 @@ export const updateUser = async (data) => {
   const uid = auth.currentUser.uid;
   try {
     const docRef = doc(db, "users", uid);
-    await setDoc(docRef, data);
+    await updateDoc(docRef, data);
   } catch (error) {
     throw error;
   }
@@ -70,4 +73,25 @@ export const updateUser = async (data) => {
 
 export const signout = async () => {
   await signOut(auth);
+};
+
+export const getUsers = async () => {
+  const q = query(collection(db, "users"));
+  const docs = await getDocs(q);
+  let users = [];
+  docs.forEach((doc) => {
+    users.push({
+      projectId: doc.id,
+      ...doc.data(),
+    });
+  });
+  return users;
+};
+
+export const deleteUser = async (id) => {
+  try {
+    await deleteDoc(doc(db, "users", id));
+  } catch (err) {
+    throw Error(err);
+  }
 };
