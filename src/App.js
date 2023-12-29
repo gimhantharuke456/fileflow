@@ -3,7 +3,7 @@ import SplashScreen from "./Components/SplashScreen";
 import LoginScreen from "./Components/LoginScreen";
 import RegisterScreen from "./Components/RegisterScreen";
 import Dashboard from "./Components/Dashboard";
-
+import "antd/dist/reset.css";
 function App() {
   return (
     <BrowserRouter>

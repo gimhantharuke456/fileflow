@@ -10,6 +10,8 @@ const Wrapper = styled.div`
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  vertical-align: center;
+  padding-top: 8px;
 `;
 
 const Text = styled.h5`

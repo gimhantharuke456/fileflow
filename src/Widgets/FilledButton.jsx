@@ -11,6 +11,7 @@ const FilledWrapper = styled.div`
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  padding-top: 8px;
 `;
 
 const FilledText = styled.h5`
