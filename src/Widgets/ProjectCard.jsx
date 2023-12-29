@@ -51,9 +51,11 @@ const ProjectCard = ({ project }) => {
       </ProjectName>
       <Divider />
       {projectFiles.length > 0 ? (
-        projectFiles.map((file) => (
-          <SingleFile key={file.fileId} file={file}></SingleFile>
-        ))
+        <div style={{ display: "flex" }}>
+          {projectFiles.map((file) => (
+            <SingleFile key={file.fileId} file={file}></SingleFile>
+          ))}
+        </div>
       ) : (
         <NoFilesMessage>No files here</NoFilesMessage>
       )}

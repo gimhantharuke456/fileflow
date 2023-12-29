@@ -92,12 +92,18 @@ const FileGrid = styled.div`
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 16px;
 `;
+
 const Project = () => {
   const snap = useSnapshot(state);
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
+  const [searchInput, setSearchInput] = useState("");
 
   const projectFiles = snap.files.filter(
     (file) => file.projectId === snap.selectedProject.projectId
+  );
+
+  const filteredFiles = projectFiles.filter((file) =>
+    file.name.toLowerCase().includes(searchInput.toLowerCase())
   );
 
   const handleAddFileClick = () => {
@@ -106,6 +112,14 @@ const Project = () => {
 
   const handleUploadModalCancel = () => {
     setUploadModalVisible(false);
+  };
+
+  const handleSearchInputChange = (e) => {
+    setSearchInput(e.target.value);
+  };
+
+  const handleSearchClear = () => {
+    setSearchInput("");
   };
 
   const UploadModal = ({ visible, onCancel }) => {
@@ -175,8 +189,15 @@ const Project = () => {
       <SearchContainer>
         <FaSearch style={{ color: "grey" }} />
         <div style={{ width: 16 }} />
-        <SearchInput placeholder="Search Files" />
-        <FaWindowClose style={{ color: "grey", cursor: "pointer" }} />
+        <SearchInput
+          placeholder="Search Files"
+          value={searchInput}
+          onChange={handleSearchInputChange}
+        />
+        <FaWindowClose
+          style={{ color: "grey", cursor: "pointer" }}
+          onClick={handleSearchClear}
+        />
       </SearchContainer>
       <div style={{ height: 16 }} />
       <Body>
@@ -192,14 +213,14 @@ const Project = () => {
           <ButtonWrapper onClick={handleAddFileClick}>
             <ButtonText>Add File</ButtonText>
             <Divider />
-            <img src={file} />
+            <img src={file} alt="File Icon" />
           </ButtonWrapper>
         </div>
         <div style={{ height: 16 }} />
         <Body>
-          {projectFiles.length > 0 ? (
+          {filteredFiles.length > 0 ? (
             <FileGrid>
-              {projectFiles.map((file) => (
+              {filteredFiles.map((file) => (
                 <SingleFile key={file.fileId} file={file}></SingleFile>
               ))}
             </FileGrid>

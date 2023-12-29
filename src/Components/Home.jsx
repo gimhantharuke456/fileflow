@@ -91,6 +91,8 @@ const Home = () => {
   const projectName = useRef();
   const [accessLevel, setAccessLevel] = useState("admin");
   const snap = useSnapshot(state);
+  const [searchInput, setSearchInput] = useState("");
+
   const handleAccessChange = (e) => setAccessLevel(e.target.value);
   const handleCreateProjectClick = () => {
     setIsModalVisible(true);
@@ -128,7 +130,7 @@ const Home = () => {
             justifyContent: "space-between",
           }}
         >
-          <img src={folder} />
+          <img src={folder} alt="Folder Icon" />
           <div style={{ width: 4 }} />
           <p>Create New Project</p>
           <div style={{ flex: 1 }} />
@@ -237,13 +239,25 @@ const Home = () => {
       });
   }, []);
 
+  // Filter projects based on search input
+  const filteredProjects = snap.projects.filter((project) =>
+    project.name.toLowerCase().includes(searchInput.toLowerCase())
+  );
+
   return (
     <Container>
       <SearchContainer>
         <FaSearch style={{ color: "grey" }} />
         <div style={{ width: 16 }} />
-        <SearchInput placeholder="Search Projects" />
-        <FaWindowClose style={{ color: "grey" }} />
+        <SearchInput
+          placeholder="Search Projects"
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+        />
+        <FaWindowClose
+          style={{ color: "grey", cursor: "pointer" }}
+          onClick={() => setSearchInput("")}
+        />
       </SearchContainer>
       <div style={{ height: 16 }} />
       <Body>
@@ -259,13 +273,15 @@ const Home = () => {
           <ButtonWrapper onClick={handleCreateProjectClick}>
             <ButtonText>Create Project</ButtonText>
             <Divider />
-            <img src={file} />
+            <img src={file} alt="File Icon" />
           </ButtonWrapper>
         </div>
         <div style={{ height: 12 }} />
-        {snap.projects.map((doc) => {
-          return <ProjectCard key={doc.projectId} project={doc} />;
-        })}
+        <div>
+          {filteredProjects.map((doc) => (
+            <ProjectCard key={doc.projectId} project={doc} />
+          ))}
+        </div>
       </Body>
 
       {/* Render react-modal for the Create Project modal */}
