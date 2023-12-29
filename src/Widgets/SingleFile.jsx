@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
+import { Menu, Dropdown, message, Modal, Input } from "antd";
 import TXT from "../assets/TXT.png";
 import JPEG from "../assets/JPEG.png";
 import DOCX from "../assets/DOCX.png";
 import PDF from "../assets/PDF.png";
 import { FaReply } from "react-icons/fa";
+import { getFiles, renameFile } from "../services/project_file_service";
+import state from "../store";
 
 const Container = styled.div`
   width: 190px;
@@ -18,6 +21,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  position: relative; /* Required for positioning the dropdown */
 `;
 
 const FileContent = styled.div`
@@ -40,6 +44,56 @@ const FileImage = styled.img`
 `;
 
 const SingleFile = ({ file }) => {
+  const [visible, setVisible] = useState(false);
+  const [commentModalVisible, setCommentModalVisible] = useState(false);
+  const [renameModalVisible, setRenameModalVisible] = useState(false);
+  const [newFileName, setNewFileName] = useState(file.name);
+
+  const handleMenuClick = ({ key }) => {
+    message.info(`Click on item ${key}`);
+    setVisible(false);
+
+    if (key === "addComment") {
+      setCommentModalVisible(true);
+    } else if (key === "rename") {
+      setRenameModalVisible(true);
+    }
+  };
+
+  const handleCommentModalCancel = () => {
+    setCommentModalVisible(false);
+  };
+
+  const handleRenameModalCancel = () => {
+    setRenameModalVisible(false);
+  };
+
+  const handleRenameModalOk = async () => {
+    try {
+      await renameFile(file.fileId, newFileName);
+      await getFiles().then((res) => {
+        state.files = res;
+      });
+      console.log("Renaming file to:", newFileName);
+      setRenameModalVisible(false);
+    } catch (err) {
+      message.error(`${err}`);
+    }
+  };
+
+  const menu = (
+    <Menu onClick={handleMenuClick}>
+      <Menu.Item key="addComment">Add Comment</Menu.Item>
+      <Menu.Item key="open">Open</Menu.Item>
+      <Menu.Item key="rename">Rename</Menu.Item>
+      <Menu.Item key="download">Download</Menu.Item>
+      <Menu.Item key="share">Share</Menu.Item>
+      <Menu.Item key="moveToRecycle" style={{ color: "red" }}>
+        Move to Recycle
+      </Menu.Item>
+    </Menu>
+  );
+
   const folderIcon = (type) => {
     switch (type) {
       case "application/pdf":
@@ -61,9 +115,40 @@ const SingleFile = ({ file }) => {
     <Container>
       <FileContent>
         <FileName>{file.name}</FileName>
-        <FaReply style={{ cursor: "pointer" }} />
+        <Dropdown
+          overlay={menu}
+          trigger={["click"]}
+          visible={visible}
+          onVisibleChange={(vis) => setVisible(vis)}
+        >
+          <FaReply style={{ cursor: "pointer" }} />
+        </Dropdown>
       </FileContent>
       <FileImage src={folderIcon(file.type)} alt={file.name} />
+
+      {/* Comment Modal */}
+      <Modal
+        title="Add Comment"
+        visible={commentModalVisible}
+        onCancel={handleCommentModalCancel}
+        footer={null}
+      >
+        {/* Implement your comment input logic here */}
+        <Input.TextArea placeholder="Type your comment here" />
+      </Modal>
+
+      {/* Rename Modal */}
+      <Modal
+        title="Rename File"
+        visible={renameModalVisible}
+        onOk={handleRenameModalOk}
+        onCancel={handleRenameModalCancel}
+      >
+        <Input
+          value={newFileName}
+          onChange={(e) => setNewFileName(e.target.value)}
+        />
+      </Modal>
     </Container>
   );
 };

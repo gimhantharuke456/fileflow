@@ -20,6 +20,7 @@ export const createFile = async (projectId, name, downloadUrl, type) => {
       downloadUrl: downloadUrl,
       type: type,
       status: "active",
+      comments: [], // Initialize comments as an empty array
     };
 
     const col = collection(db, fileCollection);
@@ -44,6 +45,7 @@ export const getFilesByProjectId = async (projectId) => {
   });
   return files;
 };
+
 export const getFiles = async () => {
   const q = query(
     collection(db, fileCollection),
@@ -90,6 +92,31 @@ export const updateFile = async (fileId, newData) => {
 export const deleteFile = async (fileId) => {
   try {
     await deleteDoc(doc(db, fileCollection, fileId));
+  } catch (error) {
+    throw Error(error);
+  }
+};
+
+export const addCommentToFile = async (fileId, comment) => {
+  try {
+    const docRef = doc(db, fileCollection, fileId);
+    const fileDoc = await getDocs(docRef);
+
+    if (fileDoc.exists()) {
+      const currentComments = fileDoc.data().comments || [];
+      const updatedComments = [...currentComments, comment];
+
+      await updateDoc(docRef, { comments: updatedComments });
+    }
+  } catch (error) {
+    throw Error(error);
+  }
+};
+
+export const renameFile = async (fileId, newName) => {
+  try {
+    const docRef = doc(db, fileCollection, fileId);
+    await updateDoc(docRef, { name: newName });
   } catch (error) {
     throw Error(error);
   }
