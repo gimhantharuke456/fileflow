@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import { Menu, Dropdown, message, Modal, Input } from "antd";
 import TXT from "../assets/TXT.png";
@@ -6,7 +6,12 @@ import JPEG from "../assets/JPEG.png";
 import DOCX from "../assets/DOCX.png";
 import PDF from "../assets/PDF.png";
 import { FaReply } from "react-icons/fa";
-import { getFiles, renameFile } from "../services/project_file_service";
+import {
+  addCommentToFile,
+  getFiles,
+  moveToRecycle,
+  renameFile,
+} from "../services/project_file_service";
 import state from "../store";
 
 const Container = styled.div`
@@ -43,12 +48,12 @@ const FileImage = styled.img`
   object-fit: contain;
 `;
 
-const SingleFile = ({ file }) => {
+const SingleFile = ({ file, fromRecycle }) => {
   const [visible, setVisible] = useState(false);
   const [commentModalVisible, setCommentModalVisible] = useState(false);
   const [renameModalVisible, setRenameModalVisible] = useState(false);
   const [newFileName, setNewFileName] = useState(file.name);
-
+  const [comment, setComment] = useState(null);
   const handleMenuClick = ({ key }) => {
     message.info(`Click on item ${key}`);
     setVisible(false);
@@ -57,11 +62,34 @@ const SingleFile = ({ file }) => {
       setCommentModalVisible(true);
     } else if (key === "rename") {
       setRenameModalVisible(true);
+    } else if (key == "moveToRecycle") {
+      moveToRecycle(file.fileId)
+        .then(() => {
+          getFiles().then((res) => {
+            state.files = res;
+          });
+        })
+        .catch((err) => {
+          message.error(`${err}`);
+        });
     }
   };
 
   const handleCommentModalCancel = () => {
     setCommentModalVisible(false);
+  };
+  const handleCommentOk = async () => {
+    try {
+      if (comment) {
+        await addCommentToFile(file.fileId, comment);
+        message.success("Comment added successfully");
+        setComment("");
+      }
+      setCommentModalVisible(false);
+    } catch (error) {
+      console.error(error);
+      message.error(`${error}`);
+    }
   };
 
   const handleRenameModalCancel = () => {
@@ -115,14 +143,17 @@ const SingleFile = ({ file }) => {
     <Container>
       <FileContent>
         <FileName>{file.name}</FileName>
-        <Dropdown
-          overlay={menu}
-          trigger={["click"]}
-          visible={visible}
-          onVisibleChange={(vis) => setVisible(vis)}
-        >
-          <FaReply style={{ cursor: "pointer" }} />
-        </Dropdown>
+
+        {!fromRecycle && (
+          <Dropdown
+            overlay={menu}
+            trigger={["click"]}
+            visible={visible}
+            onVisibleChange={(vis) => setVisible(vis)}
+          >
+            <FaReply style={{ cursor: "pointer" }} />
+          </Dropdown>
+        )}
       </FileContent>
       <FileImage src={folderIcon(file.type)} alt={file.name} />
 
@@ -131,10 +162,16 @@ const SingleFile = ({ file }) => {
         title="Add Comment"
         visible={commentModalVisible}
         onCancel={handleCommentModalCancel}
-        footer={null}
+        onOk={handleCommentOk}
       >
         {/* Implement your comment input logic here */}
-        <Input.TextArea placeholder="Type your comment here" />
+        <Input.TextArea
+          value={comment}
+          onChange={(e) => {
+            setComment(e.target.value);
+          }}
+          placeholder="Type your comment here"
+        />
       </Modal>
 
       {/* Rename Modal */}

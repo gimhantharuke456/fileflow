@@ -13,6 +13,7 @@ import Bin from "../assets/trash-01.svg";
 import Uploads from "./Uploads";
 import { useNavigate } from "react-router-dom";
 import Project from "./Project";
+import Recycle from "./Recycle";
 const Container = styled.div`
   width: 100vw;
   height: 100vh;
@@ -102,6 +103,7 @@ const Dashboard = () => {
         <RightBody>
           {snap.dashboardActiveIndex === 0 && <Home />}
           {snap.dashboardActiveIndex == 1 && <Uploads />}
+          {snap.dashboardActiveIndex == 3 && <Recycle />}
           {snap.dashboardActiveIndex == 4 && <Project />}
         </RightBody>
       </Body>

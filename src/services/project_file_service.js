@@ -3,6 +3,7 @@ import {
   collection,
   doc,
   getDocs,
+  getDoc,
   query,
   updateDoc,
   deleteDoc,
@@ -61,6 +62,21 @@ export const getFiles = async () => {
   });
   return files;
 };
+export const getBinFiles = async () => {
+  const q = query(
+    collection(db, fileCollection),
+    where("status", "==", "inactive")
+  );
+  const docs = await getDocs(q);
+  let files = [];
+  docs.forEach((doc) => {
+    files.push({
+      fileId: doc.id,
+      ...doc.data(),
+    });
+  });
+  return files;
+};
 
 export const getFileById = async (fileId) => {
   try {
@@ -100,10 +116,11 @@ export const deleteFile = async (fileId) => {
 export const addCommentToFile = async (fileId, comment) => {
   try {
     const docRef = doc(db, fileCollection, fileId);
-    const fileDoc = await getDocs(docRef);
+    const fileDoc = await getDoc(docRef);
 
     if (fileDoc.exists()) {
       const currentComments = fileDoc.data().comments || [];
+
       const updatedComments = [...currentComments, comment];
 
       await updateDoc(docRef, { comments: updatedComments });
@@ -117,6 +134,15 @@ export const renameFile = async (fileId, newName) => {
   try {
     const docRef = doc(db, fileCollection, fileId);
     await updateDoc(docRef, { name: newName });
+  } catch (error) {
+    throw Error(error);
+  }
+};
+
+export const moveToRecycle = async (fileId) => {
+  try {
+    const docRef = doc(db, fileCollection, fileId);
+    await updateDoc(docRef, { status: "inactive" });
   } catch (error) {
     throw Error(error);
   }
