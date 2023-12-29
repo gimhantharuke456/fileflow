@@ -23,6 +23,8 @@ const Body = styled.div`
   padding: 16px 34px;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  max-height: calc(100vh - 64px - 36px - 16px - 16px);
 `;
 
 const SearchContainer = styled.div`
@@ -67,7 +69,9 @@ const Uploads = () => {
         <BodyTitle title={"Uploads"} />
         <div style={{ height: 16 }} />
         {snap.projects.map((project) => {
-          return <FileCard key={project.projectId}></FileCard>;
+          return (
+            <FileCard key={project.projectId} project={project}></FileCard>
+          );
         })}
       </Body>
     </Container>

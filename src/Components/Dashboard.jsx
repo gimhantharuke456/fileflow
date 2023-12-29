@@ -11,6 +11,7 @@ import Upload from "../assets/u_box.svg";
 import Notifications from "../assets/u_bell.svg";
 import Bin from "../assets/trash-01.svg";
 import Uploads from "./Uploads";
+import { useNavigate } from "react-router-dom";
 const Container = styled.div`
   width: 100vw;
   height: 100vh;
@@ -58,10 +59,15 @@ const RightBody = styled.div`
 
 const Dashboard = () => {
   const snap = useSnapshot(state);
+  const navigate = useNavigate();
   useEffect(() => {
-    getCurrentUserData().then((res) => {
-      state.currentUser = res;
-    });
+    getCurrentUserData()
+      .then((res) => {
+        state.currentUser = res;
+      })
+      .catch((err) => {
+        navigate("/");
+      });
   }, []);
   return (
     <Container>
