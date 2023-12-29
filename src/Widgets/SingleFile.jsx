@@ -55,7 +55,6 @@ const SingleFile = ({ file, fromRecycle }) => {
   const [newFileName, setNewFileName] = useState(file.name);
   const [comment, setComment] = useState(null);
   const handleMenuClick = ({ key }) => {
-    message.info(`Click on item ${key}`);
     setVisible(false);
 
     if (key === "addComment") {
@@ -72,6 +71,13 @@ const SingleFile = ({ file, fromRecycle }) => {
         .catch((err) => {
           message.error(`${err}`);
         });
+    } else if (key === "download") {
+      window.open(file.downloadUrl, "_blank");
+    } else if (key === "share") {
+      navigator.clipboard.writeText(file.downloadUrl);
+      message.success("File URL copied to clipboard");
+    } else if (key === "open") {
+      window.open(file.downloadUrl, "_blank");
     }
   };
 

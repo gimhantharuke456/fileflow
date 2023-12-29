@@ -1,13 +1,18 @@
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "../firebaseConfig";
 
 export const uploadFile = async (file, path) => {
   try {
-    const storageRef = ref(storage, path + file.name);
-    await uploadBytes(storageRef, file);
-    const downloadURL = await getDownloadURL(storageRef);
-    return downloadURL;
+    const fileRef = ref(storage, `products/${file.name}`);
+    return await uploadBytesResumable(fileRef, file)
+      .then(async (res) => {
+        const url = await getDownloadURL(res.ref);
+        return url;
+      })
+      .catch((err) => {
+        throw Error(`${err}`);
+      });
   } catch (error) {
-    throw error;
+    throw Error(`${error}`);
   }
 };
