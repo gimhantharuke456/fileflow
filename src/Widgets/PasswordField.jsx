@@ -32,8 +32,8 @@ const EyeButton = styled.button`
 
 const FieldWrapper = styled.div`
   display: flex;
-  width: 400px;
-  height: 32px;
+  width: 425px;
+  height: 40px;
   padding: 8px 8px 8px 16px;
   justify-content: space-between;
   align-items: center;

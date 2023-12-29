@@ -6,6 +6,11 @@ const state = proxy({
   projects: [],
   files: [],
   selectedProject: {},
+  canCreateProject: false,
+  canDeleteFiles: false,
+  canSeeUsers: false,
+  canAddFiles: false,
+  canCommentFiles: false,
 });
 
 export default state;

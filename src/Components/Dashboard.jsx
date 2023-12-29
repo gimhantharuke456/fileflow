@@ -91,6 +91,27 @@ const Dashboard = () => {
     getCurrentUserData()
       .then((res) => {
         state.currentUser = res;
+        if (state.currentUser.userRole === "Admin") {
+          state.canAddFiles = true;
+          state.canCreateProject = true;
+          state.canDeleteFiles = true;
+          state.canSeeUsers = true;
+          state.canCommentFiles = true;
+        }
+        if (state.currentUser.userRole === "Project manager") {
+          state.canAddFiles = true;
+          state.canCreateProject = true;
+          state.canDeleteFiles = true;
+          state.canCommentFiles = true;
+        }
+        if (state.currentUser.userRole === "Document owner") {
+          state.canAddFiles = true;
+          state.canDeleteFiles = true;
+          state.canCommentFiles = true;
+        }
+        if (state.currentUser.userRole == "Normal user") {
+          state.canCommentFiles = true;
+        }
       })
       .catch((err) => {
         navigate("/");
@@ -120,14 +141,20 @@ const Dashboard = () => {
       <Body>
         <LeftMenuContainer>
           <DashboardMenuItem title={"Home"} icon={Home} index={0} />
-          <DashboardMenuItem title={"Upload"} icon={Upload} index={1} />
+          {snap.canAddFiles && (
+            <DashboardMenuItem title={"Upload"} icon={Upload} index={1} />
+          )}
           <DashboardMenuItem
             title={"Notifications"}
             icon={Notifications}
             index={2}
           />
-          <DashboardMenuItem title={"Bin"} icon={Bin} index={3} />
-          <DashboardMenuItem title={"Users"} icon={User} index={5} />
+          {snap.canAddFiles && (
+            <DashboardMenuItem title={"Bin"} icon={Bin} index={3} />
+          )}
+          {snap.canSeeUsers && (
+            <DashboardMenuItem title={"Users"} icon={User} index={5} />
+          )}
         </LeftMenuContainer>
         <RightBody>
           {snap.dashboardActiveIndex === 0 && <Home />}

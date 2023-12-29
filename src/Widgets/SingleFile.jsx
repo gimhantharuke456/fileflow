@@ -13,6 +13,7 @@ import {
   renameFile,
 } from "../services/project_file_service";
 import state from "../store";
+import { useSnapshot } from "valtio";
 
 const Container = styled.div`
   width: 190px;
@@ -54,6 +55,7 @@ const SingleFile = ({ file, fromRecycle }) => {
   const [renameModalVisible, setRenameModalVisible] = useState(false);
   const [newFileName, setNewFileName] = useState(file.name);
   const [comment, setComment] = useState(null);
+  const snap = useSnapshot(state);
   const handleMenuClick = ({ key }) => {
     setVisible(false);
 
@@ -117,14 +119,18 @@ const SingleFile = ({ file, fromRecycle }) => {
 
   const menu = (
     <Menu onClick={handleMenuClick}>
-      <Menu.Item key="addComment">Add Comment</Menu.Item>
+      {snap.canCommentFiles && (
+        <Menu.Item key="addComment">Add Comment</Menu.Item>
+      )}
       <Menu.Item key="open">Open</Menu.Item>
-      <Menu.Item key="rename">Rename</Menu.Item>
+      {snap.canCommentFiles && <Menu.Item key="rename">Rename</Menu.Item>}
       <Menu.Item key="download">Download</Menu.Item>
       <Menu.Item key="share">Share</Menu.Item>
-      <Menu.Item key="moveToRecycle" style={{ color: "red" }}>
-        Move to Recycle
-      </Menu.Item>
+      {snap.canDeleteFiles && (
+        <Menu.Item key="moveToRecycle" style={{ color: "red" }}>
+          Move to Recycle
+        </Menu.Item>
+      )}
     </Menu>
   );
 

@@ -270,11 +270,13 @@ const Home = () => {
           }}
         >
           <BodyTitle title={"Home"} />
-          <ButtonWrapper onClick={handleCreateProjectClick}>
-            <ButtonText>Create Project</ButtonText>
-            <Divider />
-            <img src={file} alt="File Icon" />
-          </ButtonWrapper>
+          {snap.canCreateProject && (
+            <ButtonWrapper onClick={handleCreateProjectClick}>
+              <ButtonText>Create Project</ButtonText>
+              <Divider />
+              <img src={file} alt="File Icon" />
+            </ButtonWrapper>
+          )}
         </div>
         <div style={{ height: 12 }} />
         <div>
