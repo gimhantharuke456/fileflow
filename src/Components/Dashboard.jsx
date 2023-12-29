@@ -10,6 +10,7 @@ import Home from "../Components/Home";
 import Upload from "../assets/u_box.svg";
 import Notifications from "../assets/u_bell.svg";
 import Bin from "../assets/trash-01.svg";
+import Uploads from "./Uploads";
 const Container = styled.div`
   width: 100vw;
   height: 100vh;
@@ -91,7 +92,10 @@ const Dashboard = () => {
           />
           <DashboardMenuItem title={"Bin"} icon={Bin} index={3} />
         </LeftMenuContainer>
-        <RightBody>{snap.dashboardActiveIndex === 0 && <Home />}</RightBody>
+        <RightBody>
+          {snap.dashboardActiveIndex === 0 && <Home />}
+          {snap.dashboardActiveIndex == 1 && <Uploads />}
+        </RightBody>
       </Body>
     </Container>
   );

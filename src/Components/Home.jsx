@@ -1,14 +1,17 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaSearch, FaWindowClose } from "react-icons/fa";
 import styled from "styled-components";
 import BodyTitle from "../Widgets/BodyTitle";
 import file from "../assets/file-plus-01.svg";
 import Modal from "react-modal";
-import { createProject } from "../services/project_service";
+import { createProject, getProjects } from "../services/project_service";
 import folder from "../assets/folder.svg";
 import FilledButton from "../Widgets/FilledButton";
 import OutlinedButton from "../Widgets/OutlinedButton";
-
+import { message } from "antd";
+import { useSnapshot } from "valtio";
+import state from "../store/index";
+import ProjectCard from "../Widgets/ProjectCard";
 const ModalDivider = styled.div`
   width: 100%;
   height: 1px;
@@ -84,7 +87,7 @@ const Home = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const projectName = useRef();
   const [accessLevel, setAccessLevel] = useState("admin");
-
+  const snap = useSnapshot(state);
   const handleAccessChange = (e) => setAccessLevel(e.target.value);
   const handleCreateProjectClick = () => {
     setIsModalVisible(true);
@@ -206,6 +209,17 @@ const Home = () => {
       </div>
     );
   };
+
+  useEffect(() => {
+    getProjects()
+      .then((res) => {
+        state.projects = res;
+      })
+      .catch((err) => {
+        message.error(`${err}`);
+      });
+  }, []);
+
   return (
     <Container>
       <SearchContainer>
@@ -232,6 +246,9 @@ const Home = () => {
           </ButtonWrapper>
         </div>
         <div style={{ height: 12 }} />
+        {snap.projects.map((doc) => {
+          return <ProjectCard key={doc.projectId} project={doc} />;
+        })}
       </Body>
 
       {/* Render react-modal for the Create Project modal */}

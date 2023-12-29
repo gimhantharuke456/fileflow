@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 const Title = styled.p`
   color: #000;
-  font-size: 32px;
+  font-size: 24px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
