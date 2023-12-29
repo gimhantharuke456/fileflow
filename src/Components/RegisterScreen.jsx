@@ -152,7 +152,13 @@ const RegisterScreen = () => {
             hint={"Email:"}
           />
           <DropdownMenu
-            options={["Admin"]}
+            options={[
+              "Admin",
+              "Guest user",
+              "Project manager",
+              "Document owner",
+              "Normal user",
+            ]}
             label={"Select the user role"}
             hint={"User Role:"}
             ref={userRoleRef}
