@@ -61,8 +61,8 @@ const Uploads = () => {
       <SearchContainer>
         <FaSearch style={{ color: "grey" }} />
         <div style={{ width: 16 }} />
-        <SearchInput placeholder="Search Projects" />
-        <FaWindowClose style={{ color: "grey" }} />
+        <SearchInput placeholder="Search Files" />
+        <FaWindowClose style={{ color: "grey", cursor: "pointer" }} />
       </SearchContainer>
       <div style={{ height: 16 }} />
       <Body>

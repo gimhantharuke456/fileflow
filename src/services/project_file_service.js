@@ -19,6 +19,7 @@ export const createFile = async (projectId, name, downloadUrl, type) => {
       name: name,
       downloadUrl: downloadUrl,
       type: type,
+      status: "active",
     };
 
     const col = collection(db, fileCollection);
@@ -44,7 +45,10 @@ export const getFilesByProjectId = async (projectId) => {
   return files;
 };
 export const getFiles = async () => {
-  const q = query(collection(db, fileCollection));
+  const q = query(
+    collection(db, fileCollection),
+    where("status", "==", "active")
+  );
   const docs = await getDocs(q);
   let files = [];
   docs.forEach((doc) => {

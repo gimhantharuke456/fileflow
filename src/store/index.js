@@ -5,6 +5,7 @@ const state = proxy({
   dashboardActiveIndex: 0,
   projects: [],
   files: [],
+  selectedProject: {},
 });
 
 export default state;

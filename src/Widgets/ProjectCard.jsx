@@ -16,6 +16,7 @@ const ProjectName = styled.p`
   font-style: normal;
   font-weight: 400;
   line-height: normal;
+  cursor: pointer;
 `;
 
 const NoFilesMessage = styled.div`
@@ -40,7 +41,14 @@ const ProjectCard = ({ project }) => {
 
   return (
     <Card>
-      <ProjectName>{project.name}</ProjectName>
+      <ProjectName
+        onClick={() => {
+          state.selectedProject = project;
+          state.dashboardActiveIndex = 4;
+        }}
+      >
+        {project.name}
+      </ProjectName>
       <Divider />
       {projectFiles.length > 0 ? (
         projectFiles.map((file) => (
