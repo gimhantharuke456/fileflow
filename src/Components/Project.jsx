@@ -145,11 +145,8 @@ const Project = () => {
           url,
           fileType
         );
-        state.files.push({
-          projectId: snap.selectedProject.projectId,
-          name: selectedFile.file.name,
-          downloadUrl: url,
-          type: fileType,
+        await getFiles().then((res) => {
+          state.files = res;
         });
         message.success("Files uploaded successfully");
         onCancel();

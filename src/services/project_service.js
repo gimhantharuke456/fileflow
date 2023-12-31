@@ -17,6 +17,7 @@ export const createProject = async (name, access) => {
     const projectData = {
       name: name,
       access: access,
+      comments: [],
     };
 
     const col = collection(db, projectCollection);

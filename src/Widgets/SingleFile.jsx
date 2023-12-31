@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
-import { Menu, Dropdown, message, Modal, Input } from "antd";
+import { Menu, Dropdown, message, Modal, Input, Button } from "antd";
 import TXT from "../assets/TXT.png";
 import JPEG from "../assets/JPEG.png";
 import DOCX from "../assets/DOCX.png";
@@ -48,7 +48,18 @@ const FileImage = styled.img`
   max-height: 70%;
   object-fit: contain;
 `;
-
+const NoFilesMessage = styled.div`
+  color: #777;
+  font-size: 16px;
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid grey;
+  border-radius: 12px;
+  padding: 16px 0;
+  margin-bottom: 16px;
+`;
 const SingleFile = ({ file, fromRecycle }) => {
   const [visible, setVisible] = useState(false);
   const [commentModalVisible, setCommentModalVisible] = useState(false);
@@ -56,6 +67,7 @@ const SingleFile = ({ file, fromRecycle }) => {
   const [newFileName, setNewFileName] = useState(file.name);
   const [comment, setComment] = useState(null);
   const snap = useSnapshot(state);
+  const [commentModalOpened, setCommentModalOpened] = useState(false);
   const handleMenuClick = ({ key }) => {
     setVisible(false);
 
@@ -89,7 +101,11 @@ const SingleFile = ({ file, fromRecycle }) => {
   const handleCommentOk = async () => {
     try {
       if (comment) {
+        console.log("file id " + file.fileId);
         await addCommentToFile(file.fileId, comment);
+        await getFiles().then((res) => {
+          state.files = res;
+        });
         message.success("Comment added successfully");
         setComment("");
       }
@@ -154,7 +170,7 @@ const SingleFile = ({ file, fromRecycle }) => {
   return (
     <Container>
       <FileContent>
-        <FileName>{file.name}</FileName>
+        <FileName>{file.fileId}</FileName>
 
         {!fromRecycle && (
           <Dropdown
@@ -168,7 +184,13 @@ const SingleFile = ({ file, fromRecycle }) => {
         )}
       </FileContent>
       <FileImage src={folderIcon(file.type)} alt={file.name} />
-
+      <Button
+        onClick={() => {
+          setCommentModalOpened(true);
+        }}
+      >
+        Comments
+      </Button>
       {/* Comment Modal */}
       <Modal
         title="Add Comment"
@@ -197,6 +219,21 @@ const SingleFile = ({ file, fromRecycle }) => {
           value={newFileName}
           onChange={(e) => setNewFileName(e.target.value)}
         />
+      </Modal>
+      <Modal
+        open={commentModalOpened}
+        onCancel={() => {
+          setCommentModalOpened(false);
+        }}
+        footer={null}
+      >
+        {file.comments?.map((comment, index) => {
+          return <div key={index}>{comment}</div>;
+        })}
+        {!file.comments && <NoFilesMessage>No comments here</NoFilesMessage>}
+        {file.comments?.length <= 0 && (
+          <NoFilesMessage>No comments here</NoFilesMessage>
+        )}
       </Modal>
     </Container>
   );

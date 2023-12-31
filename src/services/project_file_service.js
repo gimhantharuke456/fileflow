@@ -126,6 +126,8 @@ export const addCommentToFile = async (fileId, comment) => {
       const updatedComments = [...currentComments, comment];
 
       await updateDoc(docRef, { comments: updatedComments });
+
+      return fileId;
     }
   } catch (error) {
     throw Error(error);
