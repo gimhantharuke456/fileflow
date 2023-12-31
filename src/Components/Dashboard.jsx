@@ -18,7 +18,7 @@ import Recycle from "./Recycle";
 import AppNotifications from "./AppNotifications";
 import { Menu, Dropdown, message } from "antd";
 import Users from "../Widgets/Users";
-
+import home_icon from "../assets/u_home-alt.svg";
 const Container = styled.div`
   width: 100vw;
   height: 100vh;
@@ -114,6 +114,7 @@ const Dashboard = () => {
         }
       })
       .catch((err) => {
+        //   message.error(`${err}`);
         navigate("/");
       });
   }, []);
@@ -140,7 +141,7 @@ const Dashboard = () => {
       </Navbar>
       <Body>
         <LeftMenuContainer>
-          <DashboardMenuItem title={"Home"} icon={Home} index={0} />
+          <DashboardMenuItem title={"Home"} icon={home_icon} index={0} />
           {snap.canAddFiles && (
             <DashboardMenuItem title={"Upload"} icon={Upload} index={1} />
           )}

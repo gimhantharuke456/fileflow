@@ -5,6 +5,7 @@ import splash from "../assets/splash.png";
 import OutlinedButton from "../Widgets/OutlinedButton";
 import FilledButton from "../Widgets/FilledButton";
 import { useNavigate } from "react-router-dom";
+import { auth } from "../firebaseConfig";
 
 const Container = styled.div`
   width: 100vw;
@@ -59,6 +60,7 @@ const SplashImage = styled.img`
 
 const SplashScreen = () => {
   const navigate = useNavigate();
+
   return (
     <Container>
       <Navbar>

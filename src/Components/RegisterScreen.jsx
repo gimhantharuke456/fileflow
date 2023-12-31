@@ -1,16 +1,20 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import bro from "../assets/bro.png";
 import logo from "../assets/logo.png";
 import TextFormField from "../Widgets/TextFormField";
 import PasswordField from "../Widgets/PasswordField";
 import FilledButton from "../Widgets/FilledButton";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useHref } from "react-router-dom";
 import DropdownMenu from "../Widgets/DropDownMenu";
 import {
   signupUser,
   createUser as createUserService,
+  signout,
 } from "../services/auth_service";
+import { auth } from "../firebaseConfig";
+import { useSnapshot } from "valtio";
+import state from "../store";
 
 const Container = styled.div`
   width: 100vw;
@@ -89,10 +93,15 @@ const RegisterScreen = () => {
   const userRoleRef = useRef();
   const confirmPasswordRef = useRef();
   const navigate = useNavigate();
+  const href = useHref();
   const [error, setError] = useState("");
-
+  const snap = useSnapshot(state);
   const handleRegister = async () => {
     try {
+      if (auth.currentUser?.uid) {
+        console.log("user found logging out " + auth.currentUser?.uid);
+        await signout();
+      }
       if (
         !nameRef.current.value ||
         !emailRef.current.value ||
@@ -121,13 +130,22 @@ const RegisterScreen = () => {
         userRole: userRoleRef.current.value,
       };
 
-      await createUserService(userData);
-
-      navigate("/dashboard");
+      await createUserService(userData).then((res) => {
+        state.currentUser = userData;
+        navigate("/dashboard");
+      });
+      // navigate("/dashboard");
     } catch (error) {
       setError(error.message || "Error during registration");
     }
   };
+
+  useEffect(() => {
+    if (Object.keys(snap.currentUser).length !== 0) {
+      console.log("use effect called");
+      navigate("/dashboard");
+    }
+  }, []);
 
   return (
     <Container>
