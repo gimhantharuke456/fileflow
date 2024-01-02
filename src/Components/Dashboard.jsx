@@ -131,7 +131,7 @@ const Dashboard = () => {
           Welcome,
           <span
             style={{ fontWeight: "bold", fontSize: 16 }}
-          >{` ${snap.currentUser.name}`}</span>
+          >{` ${snap.currentUser.name}\n(${snap.currentUser?.userRole})`}</span>
         </WelcomeText>
         <div style={{ width: 16 }} />
         <Dropdown overlay={menu} trigger={["click"]}>

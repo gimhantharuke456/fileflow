@@ -138,7 +138,7 @@ const SingleFile = ({ file, fromRecycle }) => {
       {snap.canCommentFiles && (
         <Menu.Item key="addComment">Add Comment</Menu.Item>
       )}
-      <Menu.Item key="open">Open</Menu.Item>
+      <Menu.Item key="open">View</Menu.Item>
       {snap.canCommentFiles && <Menu.Item key="rename">Rename</Menu.Item>}
       <Menu.Item key="download">Download</Menu.Item>
       <Menu.Item key="share">Share</Menu.Item>

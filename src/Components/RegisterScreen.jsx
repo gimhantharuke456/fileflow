@@ -127,7 +127,7 @@ const RegisterScreen = () => {
         name: nameRef.current.value,
         email: emailRef.current.value,
         mobileNumber: mobileNumberRef.current.value,
-        userRole: userRoleRef.current.value,
+        userRole: "Admin", // userRoleRef.current.value,
       };
 
       await createUserService(userData).then((res) => {
@@ -140,12 +140,7 @@ const RegisterScreen = () => {
     }
   };
 
-  useEffect(() => {
-    if (Object.keys(snap.currentUser).length !== 0) {
-      console.log("use effect called");
-      navigate("/dashboard");
-    }
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <Container>
@@ -169,7 +164,7 @@ const RegisterScreen = () => {
             label={"Enter your email"}
             hint={"Email:"}
           />
-          <DropdownMenu
+          {/*    <DropdownMenu
             options={[
               "Admin",
               "Guest user",
@@ -180,7 +175,7 @@ const RegisterScreen = () => {
             label={"Select the user role"}
             hint={"User Role:"}
             ref={userRoleRef}
-          />
+          /> */}
           <TextFormField
             ref={mobileNumberRef}
             label={"Enter your mobile number"}
