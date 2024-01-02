@@ -15,6 +15,7 @@ import {
 import { auth } from "../firebaseConfig";
 import { useSnapshot } from "valtio";
 import state from "../store";
+import { message } from "antd";
 
 const Container = styled.div`
   width: 100vw;
@@ -132,7 +133,9 @@ const RegisterScreen = () => {
 
       await createUserService(userData).then((res) => {
         state.currentUser = userData;
-        navigate("/dashboard");
+        message.success(
+          "Registration sucess. Go back to login and login to your account"
+        );
       });
       // navigate("/dashboard");
     } catch (error) {
