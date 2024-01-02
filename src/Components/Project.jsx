@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaSearch, FaWindowClose } from "react-icons/fa";
 import styled from "styled-components";
 import { Modal, message, Upload, Button } from "antd";
@@ -9,6 +9,10 @@ import state from "../store";
 import SingleFile from "../Widgets/SingleFile";
 import file from "../assets/file-plus-01.svg";
 import { uploadFile } from "../services/upload_files";
+import { getUsers } from "../services/auth_service";
+import AssignedUsersModal from "../Widgets/AssaignedUserModal";
+import UserSelectionModal from "../Widgets/UserSelectionModal";
+import { addUserToProject } from "../services/project_service";
 
 const Container = styled.div`
   width: 100%;
@@ -97,6 +101,29 @@ const Project = () => {
   const snap = useSnapshot(state);
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
   const [searchInput, setSearchInput] = useState("");
+  const [userList, setUserList] = useState([]);
+  const [assignedUsers, setAssagnedUsers] = useState([]);
+  useEffect(() => {
+    getUsers()
+      .then((users) => {
+        let aUsers = [];
+        users.forEach((user) => {
+          if (snap.selectedProject.users.includes(user.projectId)) {
+            aUsers.push(user);
+          }
+        });
+        setAssagnedUsers(aUsers);
+        const filteredUsers = users.filter(
+          (user) =>
+            !snap.selectedProject.users.includes(user.projectId) &&
+            user.userRole == "Normal user"
+        );
+        setUserList(filteredUsers);
+      })
+      .catch((err) => {
+        message.error(`${err}`);
+      });
+  }, [snap.selectedProject.users]);
 
   const projectFiles = snap.files.filter(
     (file) => file.projectId === snap.selectedProject.projectId
@@ -121,7 +148,36 @@ const Project = () => {
   const handleSearchClear = () => {
     setSearchInput("");
   };
+  const [userModalVisible, setUserModalVisible] = useState(false);
+  const [assaignedUserModalVisible, setAssaignedUserModalVisible] =
+    useState(false);
 
+  const handleAddUserClick = () => {
+    setUserModalVisible(true);
+  };
+
+  const [assignedUsersModalVisible, setAssignedUsersModalVisible] =
+    useState(false);
+
+  const handleAssignedUserClick = () => {
+    setAssignedUsersModalVisible(true);
+  };
+
+  const handleAssignedUserModalCancel = () => {
+    setAssignedUsersModalVisible(false);
+  };
+
+  const handleUserModalCancel = () => {
+    setUserModalVisible(false);
+  };
+
+  const handleAddUsers = async (selectedUsers) => {
+    for (var id of selectedUsers) {
+      await addUserToProject(snap.selectedProject.projectId, id);
+    }
+    state.selectedProject["users"] = [...selectedUsers];
+    setUserModalVisible(false);
+  };
   const UploadModal = ({ visible, onCancel }) => {
     const [selectedFile, setSelectedFile] = useState();
 
@@ -129,11 +185,7 @@ const Project = () => {
       setSelectedFile(info);
     };
 
-    const customRequest = ({ file, onSuccess, onError }) => {
-      // Implement your file upload logic here
-      // onSuccess(file.url);
-      // onError("Error message");
-    };
+    const customRequest = ({ file, onSuccess, onError }) => {};
 
     const handleUpload = async () => {
       try {
@@ -208,11 +260,19 @@ const Project = () => {
         >
           <BodyTitle title={`Home > ${snap.selectedProject.name}`} />
           {snap.canAddFiles && (
-            <ButtonWrapper onClick={handleAddFileClick}>
-              <ButtonText>Add File</ButtonText>
-              <Divider />
-              <img src={file} alt="File Icon" />
-            </ButtonWrapper>
+            <div style={{ display: "flex", gap: 8 }}>
+              <ButtonWrapper onClick={handleAddFileClick}>
+                <ButtonText>Add File</ButtonText>
+                <Divider />
+                <img src={file} alt="File Icon" />
+              </ButtonWrapper>
+              <ButtonWrapper onClick={handleAddUserClick}>
+                <ButtonText>Add Users</ButtonText>
+              </ButtonWrapper>
+              <ButtonWrapper onClick={handleAssignedUserClick}>
+                <ButtonText>Assigned Users</ButtonText>
+              </ButtonWrapper>
+            </div>
           )}
         </div>
         <div style={{ height: 16 }} />
@@ -232,6 +292,17 @@ const Project = () => {
           />
         </Body>
       </Body>
+      <UserSelectionModal
+        visible={userModalVisible}
+        onCancel={handleUserModalCancel}
+        onAddUser={handleAddUsers}
+        userList={userList}
+      />{" "}
+      <AssignedUsersModal
+        visible={assignedUsersModalVisible}
+        onCancel={handleAssignedUserModalCancel}
+        assignedUsers={assignedUsers}
+      />
     </Container>
   );
 };

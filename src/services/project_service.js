@@ -8,6 +8,8 @@ import {
   updateDoc,
   deleteDoc,
   addDoc,
+  arrayUnion,
+  arrayRemove,
 } from "firebase/firestore";
 import { createNotification } from "./notification_service";
 const projectCollection = "projects";
@@ -71,6 +73,28 @@ export const updateProject = async (projectId, newData) => {
 export const deleteProject = async (projectId) => {
   try {
     await deleteDoc(doc(db, projectCollection, projectId));
+  } catch (error) {
+    throw Error(error);
+  }
+};
+
+export const addUserToProject = async (projectId, userId) => {
+  try {
+    const projectDocRef = doc(db, projectCollection, projectId);
+    await updateDoc(projectDocRef, {
+      users: arrayUnion(userId), // Assuming you have a field 'users' in your project document
+    });
+    await createNotification(`User added to the project`);
+  } catch (error) {
+    throw Error(error);
+  }
+};
+export const removeUserFromProject = async (projectId, userId) => {
+  try {
+    const projectDocRef = doc(db, projectCollection, projectId);
+    await updateDoc(projectDocRef, {
+      users: arrayRemove(userId),
+    });
   } catch (error) {
     throw Error(error);
   }
