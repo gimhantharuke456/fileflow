@@ -239,10 +239,17 @@ const Home = () => {
       });
   }, []);
 
-  // Filter projects based on search input
-  const filteredProjects = snap.projects.filter((project) =>
-    project.name.toLowerCase().includes(searchInput.toLowerCase())
-  );
+  // Filter projects based on search input and user access
+  const filteredProjects = snap.projects
+    .filter((project) =>
+      project.name.toLowerCase().includes(searchInput.toLowerCase())
+    )
+    .filter((project) => {
+      if (snap.currentUser?.userRole === "Normal user") {
+        return project.users?.includes(snap.currentUser?.id);
+      }
+      return true;
+    });
 
   return (
     <Container>

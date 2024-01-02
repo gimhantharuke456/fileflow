@@ -61,10 +61,10 @@ export const getCurrentUserData = async () => {
   }
 };
 
-export const updateUser = async (data) => {
-  const uid = auth.currentUser.uid;
+export const updateUser = async (data, id) => {
   try {
-    const docRef = doc(db, "users", uid);
+    console.log(data);
+    const docRef = doc(db, "users", id);
     await updateDoc(docRef, data);
   } catch (error) {
     throw error;
@@ -85,6 +85,7 @@ export const getUsers = async () => {
       ...doc.data(),
     });
   });
+
   return users;
 };
 

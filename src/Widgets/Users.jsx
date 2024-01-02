@@ -1,8 +1,17 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import BodyTitle from "./BodyTitle";
-import { Table, Space, Button, Select, Modal, message } from "antd";
+import {
+  Table,
+  Space,
+  Button,
+  Select,
+  Modal,
+  Form,
+  Input,
+  message,
+} from "antd";
 import { getUsers, updateUser, deleteUser } from "../services/auth_service";
+import state from "../store";
 
 const Container = styled.div`
   width: 100%;
@@ -51,25 +60,28 @@ const Users = () => {
       title: "Role",
       dataIndex: "userRole",
       key: "userRole",
-      render: (text, record) => (
-        <Select
-          defaultValue={text}
-          style={{ width: 120 }}
-          onChange={(value) => handleChangeRole(record, value)}
-        >
-          <Option value="guest_user">Guest User</Option>
-          <Option value="admin">Admin</Option>
-          <Option value="project_manager">Project Manager </Option>
-          <Option value="document_owner">Document Owner</Option>
-          <Option value="normal_user">Normal User</Option>
-        </Select>
-      ),
+      // render: (text, record) => (
+      //   <Select
+      //     defaultValue={text}
+      //     style={{ width: 120 }}
+      //     onChange={(value) => handleChangeRole(value)}
+      //   >
+      //     <Option value="Guest user">Guest User</Option>
+      //     <Option value="Admin">Admin</Option>
+      //     <Option value="Project Manager">Project Manager</Option>
+      //     <Option value="Document owner">Document Owner</Option>
+      //     <Option value="Normal user">Normal User</Option>
+      //   </Select>
+      // ),
     },
     {
       title: "Action",
       key: "action",
       render: (text, record) => (
         <Space size="middle">
+          <Button type="primary" onClick={() => handleEdit(record)}>
+            Edit
+          </Button>
           <Button type="primary" danger onClick={() => handleDelete(record)}>
             Delete
           </Button>
@@ -86,17 +98,17 @@ const Users = () => {
     try {
       const usersData = await getUsers();
       setUsers(usersData);
+
       setLoading(false);
     } catch (error) {
       console.error(error);
     }
   };
 
-  const handleChangeRole = async (user, value) => {
+  const handleChangeRole = async (value) => {
     try {
-      const updatedUser = { ...user, userRole: value };
-      await updateUser(updatedUser);
-
+      const updatedUser = { ...selectedUser, userRole: value };
+      await updateUser(updatedUser, selectedUser.projectId);
       await fetchUsers();
       message.success("User role updated");
     } catch (error) {
@@ -104,8 +116,15 @@ const Users = () => {
     }
   };
 
-  const handleEdit = (user) => {
+  const handleEdit = async (user) => {
+    form.resetFields();
     setSelectedUser(user);
+    form.setFieldsValue({
+      name: user.name,
+      email: user.email,
+      mobileNumber: user.mobileNumber,
+      userRole: user.userRole,
+    });
     setModalVisible(true);
   };
 
@@ -126,20 +145,23 @@ const Users = () => {
 
   const handleModalOk = async () => {
     try {
-      // Update the selected user with the modified data
-      await updateUser(selectedUser);
-      // Update the state or refetch users
-      fetchUsers();
+      const updatedUser = await form.validateFields();
+      console.log(updatedUser);
+      await updateUser(updatedUser, selectedUser.projectId);
+      await fetchUsers();
       setModalVisible(false);
       setSelectedUser(null);
+      form.resetFields();
+      message.success("User updated");
     } catch (error) {
       console.error(error);
     }
   };
 
+  const [form] = Form.useForm();
+
   return (
     <Container>
-      <BodyTitle title={"Users"} />
       <Body>
         <Table
           columns={columns}
@@ -151,18 +173,61 @@ const Users = () => {
         {/* Edit User Modal */}
         <Modal
           title="Edit User"
-          visible={modalVisible}
+          open={modalVisible}
           onOk={handleModalOk}
           onCancel={handleModalCancel}
+          destroyOnClose
+          closeAfterTransition
         >
-          {/* Add your form fields here */}
-          {/* For example:
-          <Input
-            value={selectedUser ? selectedUser.name : ""}
-            onChange={(e) => setSelectedUser({ ...selectedUser, name: e.target.value })}
-            placeholder="Name"
-          />
-          */}
+          <Form
+            form={form}
+            initialValues={{
+              name: selectedUser?.name,
+              email: selectedUser?.email,
+              mobileNumber: selectedUser?.mobileNumber,
+              userRole: selectedUser?.userRole,
+            }}
+          >
+            <Form.Item
+              name="name"
+              label="Name"
+              rules={[{ required: true, message: "Please enter a name" }]}
+            >
+              <Input placeholder="Name" />
+            </Form.Item>
+
+            <Form.Item
+              name="email"
+              label="Email"
+              rules={[{ required: true, message: "Please enter an email" }]}
+            >
+              <Input placeholder="Email" disabled />
+            </Form.Item>
+
+            <Form.Item
+              name="mobileNumber"
+              label="Mobile Number"
+              rules={[
+                { required: true, message: "Please enter a mobile number" },
+              ]}
+            >
+              <Input placeholder="Mobile Number" />
+            </Form.Item>
+
+            <Form.Item
+              name="userRole"
+              label="Role"
+              rules={[{ required: true, message: "Please select a role" }]}
+            >
+              <Select style={{ width: "100%" }}>
+                <Option value="Guest user">Guest User</Option>
+                <Option value="Admin">Admin</Option>
+                <Option value="Project Manager">Project Manager</Option>
+                <Option value="Document owner">Document Owner</Option>
+                <Option value="Normal user">Normal User</Option>
+              </Select>
+            </Form.Item>
+          </Form>
         </Modal>
       </Body>
     </Container>

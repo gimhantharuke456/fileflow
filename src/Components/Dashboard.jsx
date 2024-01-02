@@ -90,6 +90,11 @@ const Dashboard = () => {
   useEffect(() => {
     getCurrentUserData()
       .then((res) => {
+        state.canAddFiles = false;
+        state.canCreateProject = false;
+        state.canDeleteFiles = false;
+        state.canSeeUsers = false;
+        state.canCommentFiles = false;
         state.currentUser = res;
         if (state.currentUser.userRole === "Admin") {
           state.canAddFiles = true;
@@ -111,6 +116,11 @@ const Dashboard = () => {
         }
         if (state.currentUser.userRole == "Normal user") {
           state.canCommentFiles = true;
+          state.canCreateProject = false;
+          state.canAddFiles = false;
+          state.canCreateProject = false;
+          state.canDeleteFiles = false;
+          state.canSeeUsers = false;
         }
       })
       .catch((err) => {
