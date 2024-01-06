@@ -50,7 +50,9 @@ const PasswordField = forwardRef(({ label, hint }, ref) => {
 
   return (
     <Wrapper>
-      <Label>{hint}</Label>
+      <Label>
+        {hint} <span style={{ color: "red" }}>*</span>{" "}
+      </Label>
       <FieldWrapper>
         <Field
           ref={ref}

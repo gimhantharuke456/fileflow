@@ -34,10 +34,12 @@ const FieldWrapper = styled.div`
   border-radius: 6px;
 `;
 
-const TextFormField = forwardRef(({ label, hint }, ref) => {
+const TextFormField = forwardRef(({ label, hint, mandotary }, ref) => {
   return (
     <Wrapper>
-      <Label>{hint}</Label>
+      <Label>
+        {hint} {mandotary ?? <span style={{ color: "red" }}>{"*"}</span>}{" "}
+      </Label>
       <FieldWrapper>
         <Field ref={ref} placeholder={label} />
       </FieldWrapper>

@@ -76,6 +76,7 @@ const ForgetPasswordText = styled.div`
   letter-spacing: 0.3px;
   cursor: pointer;
 `;
+
 const DontYouText = styled.p`
   color: #1a1a1a;
   font-feature-settings: "clig" off, "liga" off;
@@ -84,6 +85,11 @@ const DontYouText = styled.p`
   font-weight: 400;
   line-height: 20px; /* 166.667% */
   letter-spacing: 0.3px;
+`;
+
+const Asterisk = styled.span`
+  color: red;
+  margin-left: 4px;
 `;
 
 const RegisterScreen = () => {
@@ -97,6 +103,7 @@ const RegisterScreen = () => {
   const href = useHref();
   const [error, setError] = useState("");
   const snap = useSnapshot(state);
+
   const handleRegister = async () => {
     try {
       if (auth.currentUser?.uid) {
@@ -134,7 +141,7 @@ const RegisterScreen = () => {
       await createUserService(userData).then((res) => {
         state.currentUser = userData;
         message.success(
-          "Registration sucess. Go back to login and login to your account"
+          "Registration success. Go back to login and login to your account"
         );
       });
       // navigate("/dashboard");
@@ -154,7 +161,11 @@ const RegisterScreen = () => {
         <div style={{ flex: 1 }} />
         <FormContainer>
           <Logo>
-            <img src={logo} style={{ width: "100%", height: "100%" }} />
+            <img
+              src={logo}
+              style={{ width: "100%", height: "100%" }}
+              alt="Logo"
+            />
           </Logo>
           {error && <div style={{ color: "red" }}>{error}</div>}
           <TextFormField
@@ -167,18 +178,6 @@ const RegisterScreen = () => {
             label={"Enter your email"}
             hint={"Email:"}
           />
-          {/*    <DropdownMenu
-            options={[
-              "Admin",
-              "Guest user",
-              "Project manager",
-              "Document owner",
-              "Normal user",
-            ]}
-            label={"Select the user role"}
-            hint={"User Role:"}
-            ref={userRoleRef}
-          /> */}
           <TextFormField
             ref={mobileNumberRef}
             label={"Enter your mobile number"}
