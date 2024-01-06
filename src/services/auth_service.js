@@ -63,7 +63,7 @@ export const getCurrentUserData = async () => {
 
 export const updateUser = async (data, id) => {
   try {
-    console.log(data);
+    console.log(`${data} ${id}`);
     const docRef = doc(db, "users", id);
     await updateDoc(docRef, data);
   } catch (error) {

@@ -1,7 +1,12 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { Modal, Form, Input, Button } from "antd";
 import logo from "../assets/logo.png";
-import { getCurrentUserData, signout } from "../services/auth_service";
+import {
+  getCurrentUserData,
+  signout,
+  updateUser,
+} from "../services/auth_service";
 import state from "../store";
 import { useSnapshot } from "valtio";
 import profile_icon from "../assets/profile_icon.svg";
@@ -19,6 +24,9 @@ import AppNotifications from "./AppNotifications";
 import { Menu, Dropdown, message } from "antd";
 import Users from "../Widgets/Users";
 import home_icon from "../assets/u_home-alt.svg";
+import { auth, db } from "../firebaseConfig";
+import { doc, getDoc, onSnapshot } from "firebase/firestore";
+
 const Container = styled.div`
   width: 100vw;
   height: 100vh;
@@ -67,6 +75,7 @@ const RightBody = styled.div`
 const Dashboard = () => {
   const snap = useSnapshot(state);
   const navigate = useNavigate();
+  const [name, setName] = useState("aa");
 
   const handleMenuClick = ({ key }) => {
     if (key === "logout") {
@@ -80,9 +89,49 @@ const Dashboard = () => {
     }
   };
 
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [formValues, setFormValues] = useState({});
+
+  const layout = {
+    labelCol: { span: 8 },
+    wrapperCol: { span: 16 },
+  };
+
+  const onFinish = (values) => {
+    updateUser(values, snap.currentUser?.projectId)
+      .then(() => {
+        getCurrentUserData()
+          .then((res) => {
+            state.currentUser = res;
+            setName(formValues.name);
+            message.success("User details updated successfully");
+            setFormValues({});
+          })
+          .catch((err) => {
+            message.error(`${err}`);
+          });
+        setIsModalVisible(false);
+      })
+      .catch((error) => {
+        message.error(`Failed to update user details: ${error.message}`);
+      });
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
   const menu = (
     <Menu onClick={handleMenuClick}>
-      <Menu.Item key="userEmail">{snap.currentUser.email}</Menu.Item>
+      <Menu.Item
+        onClick={() => {
+          setFormValues(state.currentUser);
+          setIsModalVisible(true);
+        }}
+        key="userEmail"
+      >
+        {snap.currentUser.email}
+      </Menu.Item>
       <Menu.Item key="logout">Logout</Menu.Item>
     </Menu>
   );
@@ -122,12 +171,29 @@ const Dashboard = () => {
           state.canDeleteFiles = false;
           state.canSeeUsers = false;
         }
+        setFormValues(res);
       })
       .catch((err) => {
         //   message.error(`${err}`);
         navigate("/");
       });
   }, []);
+
+  useEffect(() => {
+    console.log("ran");
+    const uid = auth.currentUser.uid;
+    const docRef = doc(db, "users", uid);
+    const unsubscribe = onSnapshot(docRef, (doc) => {
+      const userData = doc.data();
+      setName(userData?.name || "");
+      state.currentUser = userData;
+      setFormValues(userData);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [name]);
 
   return (
     <Container>
@@ -141,7 +207,7 @@ const Dashboard = () => {
           Welcome,
           <span
             style={{ fontWeight: "bold", fontSize: 16 }}
-          >{` ${snap.currentUser.name}\n(${snap.currentUser?.userRole})`}</span>
+          >{` ${name}\n(${snap.currentUser?.userRole})`}</span>
         </WelcomeText>
         <div style={{ width: 16 }} />
         <Dropdown overlay={menu} trigger={["click"]}>
@@ -176,6 +242,42 @@ const Dashboard = () => {
           {snap.dashboardActiveIndex == 5 && <Users />}
         </RightBody>
       </Body>
+      <Modal
+        title="Update User Details"
+        visible={isModalVisible}
+        onCancel={handleCancel}
+        footer={null}
+      >
+        <Form
+          {...layout}
+          name="updateDetailsForm"
+          onFinish={onFinish}
+          initialValues={formValues}
+        >
+          <Form.Item
+            label="Name"
+            name="name"
+            rules={[{ required: true, message: "Please enter your name!" }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Phone number"
+            name="mobileNumber"
+            rules={[
+              { required: true, message: "Please enter your phone number" },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
+            <Button type="primary" htmlType="submit">
+              Update
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
     </Container>
   );
 };
