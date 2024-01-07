@@ -172,6 +172,7 @@ const RegisterScreen = () => {
             ref={nameRef}
             label={"Enter your name"}
             hint={"Name:"}
+            
           />
           <TextFormField
             ref={emailRef}
@@ -187,6 +188,7 @@ const RegisterScreen = () => {
             ref={passwordRef}
             label={"Enter your password"}
             hint={"Password:"}
+            
           />
           <PasswordField
             ref={confirmPasswordRef}
