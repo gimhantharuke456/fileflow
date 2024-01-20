@@ -130,7 +130,8 @@ const Users = () => {
 
   const handleDelete = async (user) => {
     try {
-      await deleteUser(user.uid);
+      console.log(user);
+      await deleteUser(user.projectId);
       await fetchUsers();
       message.success("User deleted");
     } catch (error) {

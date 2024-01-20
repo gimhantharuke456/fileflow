@@ -98,7 +98,7 @@ const Dashboard = () => {
   };
 
   const onFinish = (values) => {
-    updateUser(values, snap.currentUser?.projectId)
+    updateUser(values, auth.currentUser?.uid)
       .then(() => {
         getCurrentUserData()
           .then((res) => {
